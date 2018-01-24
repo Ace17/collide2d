@@ -54,15 +54,8 @@ struct span
   size_t len;
   T* ptr;
 
-  T* begin()
-  {
-    return ptr;
-  }
-
-  T* end()
-  {
-    return ptr + len;
-  }
+  T* begin() { return ptr; }
+  T* end() { return ptr + len; }
 };
 
 struct CollisionInfo
