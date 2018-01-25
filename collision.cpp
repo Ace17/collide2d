@@ -67,26 +67,35 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   return CollisionInfo{0, N};
 }
 
+template<typename Lambda>
+void foreachSegment(Polygon const& poly, Lambda onSegment)
+{
+  auto const K = (int)poly.vertices.size();
+
+  for(int i = 0; i < K; ++i)
+  {
+    auto const s0 = poly.vertices[(i + 0) % K];
+    auto const s1 = poly.vertices[(i + 1) % K];
+
+    onSegment(s0, s1);
+  }
+}
+
 static
 CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
   auto earliestCollision = CollisionInfo { 1, Vec2::zero() };
 
-  for(auto& poly : polygons)
+  auto collideWithSegment = [&](Vec2 s0, Vec2 s1)
   {
-    auto const K = (int)poly.vertices.size();
+    auto const collision = collideCircleWithSegment(pos, s0, s1);
 
-    for(int i = 0; i < K; ++i)
-    {
-      auto const s0 = poly.vertices[(i + 0) % K];
-      auto const s1 = poly.vertices[(i + 1) % K];
+    if(collision.time < earliestCollision.time)
+      earliestCollision = collision;
+  };
 
-      auto const collision = collideCircleWithSegment(pos, s0, s1);
-
-      if(collision.time < earliestCollision.time)
-        earliestCollision = collision;
-    }
-  }
+  for(auto& poly : polygons)
+    foreachSegment(poly, collideWithSegment);
 
   return earliestCollision;
 }
