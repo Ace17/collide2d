@@ -51,11 +51,11 @@ void tick(World& world)
     world.pos += direction(world.angle) * 0.1;
 
   world.angle += omega;
-  auto const vel = direction(world.angle) * thrust;
+  auto const delta = direction(world.angle) * thrust;
 
   auto polygons = span<Polygon> { world.sectors.size(), world.sectors.data() };
   for(int i=0;i < 4;++i)
-    slideMove(world.pos, vel * 0.25, polygons);
+    slideMove(world.pos, delta * 0.25, polygons);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
