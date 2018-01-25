@@ -68,7 +68,7 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
 static
 CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
-  auto bestTr = CollisionInfo { 1, Vec2::zero() };
+  auto firstCollision = CollisionInfo { 1, Vec2::zero() };
 
   for(auto& poly : polygons)
   {
@@ -79,34 +79,34 @@ CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
       auto const s0 = poly.vertices[(i + 0) % K];
       auto const s1 = poly.vertices[(i + 1) % K];
 
-      auto const tr = collideCircleWithSegment(pos, s0, s1);
+      auto const collision = collideCircleWithSegment(pos, s0, s1);
 
-      if(tr.time < bestTr.time)
-        bestTr = tr;
+      if(collision.time < firstCollision.time)
+        firstCollision = collision;
     }
   }
 
-  return bestTr;
+  return firstCollision;
 }
 
 void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons)
 {
   for(int i = 0; i < 5; ++i)
   {
-    auto const tr = collideWithPolygons(pos + delta, polygons);
+    auto const collision = collideWithPolygons(pos + delta, polygons);
 
-    auto const advance = delta * tr.time;
+    auto const advance = delta * collision.time;
     pos += advance;
     delta -= advance;
 
-    if(tr.time >= 1)
+    if(collision.time >= 1)
       break;
 
     // fixup position: slightly repulsive walls
-    pos += tr.N * 0.004;
+    pos += collision.N * 0.004;
 
     // only keep tangential part of delta
-    delta = removeComponentAlong(delta, tr.N);
+    delta = removeComponentAlong(delta, collision.N);
   }
 }
 
