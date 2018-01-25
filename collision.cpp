@@ -51,7 +51,7 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   auto const delta = circleCenter - closestPointToCircle;
 
   if(delta * delta > RAY * RAY)
-    return CollisionInfo{1, Vec2(0, 0)};
+    return CollisionInfo{1, Vec2::zero() };
 
   auto const N = delta * (1.0 / magnitude(delta));
 
@@ -61,7 +61,7 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
 static
 CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
-  auto bestTr = CollisionInfo { 1, Vec2(0, 0) };
+  auto bestTr = CollisionInfo { 1, Vec2::zero() };
 
   for(auto& poly : polygons)
   {

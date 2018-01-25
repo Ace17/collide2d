@@ -46,6 +46,11 @@ struct Vec2
   {
     return Vec2 { x - other.x, y - other.y };
   }
+
+  static Vec2 zero()
+  {
+    return Vec2(0, 0);
+  }
 };
 
 template<typename T>
