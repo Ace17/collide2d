@@ -58,12 +58,6 @@ struct span
   T* end() { return ptr + len; }
 };
 
-struct CollisionInfo
-{
-  float ratio;
-  Vec2 N;
-};
-
 struct Polygon
 {
   std::vector<Vec2> vertices;

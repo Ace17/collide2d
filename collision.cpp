@@ -34,6 +34,12 @@ Vec2 removeComponentAlong(Vec2 v, Vec2 u)
   return v - u * comp;
 }
 
+struct CollisionInfo
+{
+  float ratio;
+  Vec2 N;
+};
+
 static
 CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 w0, Vec2 w1)
 {
