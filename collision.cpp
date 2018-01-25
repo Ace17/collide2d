@@ -68,7 +68,7 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
 static
 CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
-  auto firstCollision = CollisionInfo { 1, Vec2::zero() };
+  auto earliestCollision = CollisionInfo { 1, Vec2::zero() };
 
   for(auto& poly : polygons)
   {
@@ -81,12 +81,12 @@ CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 
       auto const collision = collideCircleWithSegment(pos, s0, s1);
 
-      if(collision.time < firstCollision.time)
-        firstCollision = collision;
+      if(collision.time < earliestCollision.time)
+        earliestCollision = collision;
     }
   }
 
-  return firstCollision;
+  return earliestCollision;
 }
 
 void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons)
