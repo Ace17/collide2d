@@ -22,12 +22,12 @@ struct Vec2
     return Vec2 { x* f, y* f };
   }
 
-  void operator+=(Vec2 other)
+  void operator += (Vec2 other)
   {
     *this = *this + other;
   }
 
-  void operator-=(Vec2 other)
+  void operator -= (Vec2 other)
   {
     *this = *this - other;
   }

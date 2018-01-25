@@ -102,6 +102,7 @@ void tick(World& world)
   auto const delta = direction(world.angle) * thrust;
 
   auto polygons = span<Polygon> { world.sectors.size(), world.sectors.data() };
+
   for(int i=0;i < 4;++i)
     slideMove(world.pos, delta * 0.25, polygons);
 }
@@ -129,7 +130,7 @@ void safeMain()
 
   init(world);
 
-  auto transform = [](Vec2 v)
+  auto transform = [] (Vec2 v)
   {
     auto const scale = 20.0;
     SDL_Point r;
@@ -137,8 +138,8 @@ void safeMain()
     r.y = 400 - v.y * scale;
     return r;
   };
-
-  auto drawScreen = [&]()
+  
+  auto drawScreen = [&] ()
   {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
@@ -148,8 +149,10 @@ void safeMain()
       SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
       vector<SDL_Point> sdlPoints;
+
       for(auto p : sector.vertices)
         sdlPoints.push_back(transform(p));
+
       sdlPoints.push_back(transform(sector.vertices[0]));
 
       SDL_RenderDrawLines(renderer, sdlPoints.data(), sdlPoints.size());
@@ -159,8 +162,9 @@ void safeMain()
       SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
       vector<SDL_Point> sdlPoints;
       sdlPoints.push_back(transform(world.pos));
-      for(int i=0;i <= 100;++i)
-        sdlPoints.push_back(transform(world.pos+direction(world.angle + i * 2 * M_PI / 100)));
+
+      for(int i = 0; i <= 100; ++i)
+        sdlPoints.push_back(transform(world.pos + direction(world.angle + i * 2 * M_PI / 100)));
 
       SDL_RenderDrawLines(renderer, sdlPoints.data(), sdlPoints.size());
     }
