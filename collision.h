@@ -69,6 +69,9 @@ struct Polygon
   std::vector<Vec2> vertices;
 };
 
+// Tries to move a circle or ray 'RAY', initially at 'pos',
+// to the position 'pos+delta'.
+// Collides with 'polygons', and slides along them on collision.
 void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons);
 
 static auto const RAY = 0.95;
