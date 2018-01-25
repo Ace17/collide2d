@@ -36,17 +36,17 @@ Vec2 removeComponentAlong(Vec2 v, Vec2 u)
 
 struct CollisionInfo
 {
-  float ratio;
-  Vec2 N;
+  float time; // collision time: 0 for immediate blocking, 1 for "no collision"
+  Vec2 N; // collision normal. Pointing towards the moving object
 };
 
 static
-CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 w0, Vec2 w1)
+CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
 {
-  auto const seg_len = magnitude(w1 - w0);
-  auto const seg_v = (w1 - w0) * (1.0 / seg_len);
-  auto const rel_b = circleCenter - w0;
-  auto const closestPointToCircle = w0 + seg_v * clamp(rel_b * seg_v, 0.0f, seg_len);
+  auto const segmentLength = magnitude(s1 - s0);
+  auto const segmentDir = (s1 - s0) * (1.0 / segmentLength);
+  auto const relativeCircleCenter = circleCenter - s0;
+  auto const closestPointToCircle = s0 + segmentDir * clamp(relativeCircleCenter * segmentDir, 0.0f, segmentLength);
 
   auto const delta = circleCenter - closestPointToCircle;
 
@@ -69,12 +69,12 @@ CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 
     for(int i = 0; i < K; ++i)
     {
-      auto const w0 = poly.vertices[(i + 0) % K];
-      auto const w1 = poly.vertices[(i + 1) % K];
+      auto const s0 = poly.vertices[(i + 0) % K];
+      auto const s1 = poly.vertices[(i + 1) % K];
 
-      auto const tr = collideCircleWithSegment(pos, w0, w1);
+      auto const tr = collideCircleWithSegment(pos, s0, s1);
 
-      if(tr.ratio < bestTr.ratio)
+      if(tr.time < bestTr.time)
         bestTr = tr;
     }
   }
@@ -88,17 +88,17 @@ void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons)
   {
     auto const tr = collideWithPolygons(pos + delta, polygons);
 
-    auto const advance = delta * tr.ratio;
+    auto const advance = delta * tr.time;
     pos += advance;
     delta -= advance;
 
-    if(tr.ratio >= 1)
+    if(tr.time >= 1)
       break;
 
     // fixup position: slightly repulsive walls
     pos += tr.N * 0.004;
 
-    // keep tangential part of delta
+    // only keep tangential part of delta
     delta = removeComponentAlong(delta, tr.N);
   }
 }
