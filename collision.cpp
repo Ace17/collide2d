@@ -40,13 +40,20 @@ struct CollisionInfo
   Vec2 N; // collision normal. Pointing towards the moving object
 };
 
+// returns the point from the segment [s0;s1] which is the closest to 'pos'
 static
-CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
+Vec2 closestPointToSegment(Vec2 pos, Vec2 s0, Vec2 s1)
 {
   auto const segmentLength = magnitude(s1 - s0);
   auto const segmentDir = (s1 - s0) * (1.0 / segmentLength);
-  auto const relativeCircleCenter = circleCenter - s0;
-  auto const closestPointToCircle = s0 + segmentDir * clamp(relativeCircleCenter * segmentDir, 0.0f, segmentLength);
+  auto const relativePos = pos - s0;
+  return s0 + segmentDir * clamp(relativePos * segmentDir, 0.0f, segmentLength);
+}
+
+static
+CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
+{
+  auto const closestPointToCircle = closestPointToSegment(circleCenter, s0, s1);
 
   auto const delta = circleCenter - closestPointToCircle;
 
