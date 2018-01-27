@@ -2,16 +2,18 @@
 
 Author: Sebastien Alaiwan
 
-A tiny standalone 2D collision detection and response test app
+A tiny standalone 2D collision detection and response module,
+and a SDL demo app to test it.
 
-To run, simply launch:
+<p align="center"><img src="screenshot.gif" width="50%"></p>
+
+To run the demo, simply launch:
 ```
 ./run.sh
 ```
 
-Or you can compile it yourself using the following command:
+You can also compile it yourself, using the following command:
 ```
-g++ main.cpp collision.cpp `sdl2-config --cflags --libs` -o collide2d
+g++ sdl_demo.cpp collision.cpp `sdl2-config --cflags --libs` -o collide2d
 ```
 
-<p align="center"><img src="screenshot.gif" width="50%"></p>
