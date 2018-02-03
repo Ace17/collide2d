@@ -130,8 +130,7 @@ void tick(World& world)
 
   auto polygons = span<Polygon> { world.sectors.size(), world.sectors.data() };
 
-  for(int i=0;i < 4;++i)
-    slideMove(world.pos, delta * 0.25, polygons);
+  slideMove(world.pos, delta, polygons);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
