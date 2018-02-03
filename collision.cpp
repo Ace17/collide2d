@@ -38,9 +38,8 @@ Vec2 removeComponentAlong(Vec2 v, Vec2 u)
 
 struct CollisionInfo
 {
-  float time; // collision time: 0 for immediate blocking, 1 for "no collision"
   Vec2 N; // collision normal. Pointing towards the moving object
-  float dist = 1.0 / 0.0;
+  float dist = INFINITY; // distance (circle center, colliding segment)
 };
 
 // returns the point from the segment [s0;s1] which is the closest to 'pos'
@@ -61,12 +60,12 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   auto const delta = circleCenter - closestPointToCircle;
 
   if(delta * delta > RAY * RAY)
-    return CollisionInfo { 1, Vec2::zero() };
+    return CollisionInfo { Vec2::zero() };
 
   auto const dist = magnitude(delta);
   auto const N = delta * (1.0 / dist);
 
-  return CollisionInfo { 0, N, dist };
+  return CollisionInfo { N, dist };
 }
 
 template<typename Lambda>
@@ -86,7 +85,7 @@ void foreachSegment(Polygon const& poly, Lambda onSegment)
 static
 CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
-  auto earliestCollision = CollisionInfo { 1, Vec2::zero() };
+  auto earliestCollision = CollisionInfo { Vec2::zero() };
 
   auto collideWithSegment = [&] (Vec2 s0, Vec2 s1)
     {
@@ -108,12 +107,11 @@ void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons)
   {
     auto const collision = collideWithPolygons(pos + delta, polygons);
 
-    auto const advance = delta * collision.time;
-    pos += advance;
-    delta -= advance;
-
-    if(collision.time >= 1)
+    if(collision.dist == INFINITY)
+    {
+      pos += delta;
       break;
+    }
 
     // fixup position: slightly repulsive walls
     pos += collision.N * 0.004;
