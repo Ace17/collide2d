@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <vector>
+#include <cstddef>
 
 struct Vec2
 {
@@ -63,15 +63,15 @@ struct span
   T* end() { return ptr + len; }
 };
 
-struct Polygon
+struct Segment
 {
-  std::vector<Vec2> vertices;
+  Vec2 a, b;
 };
 
-// Tries to move a circle or ray 'RAY', initially at 'pos',
+// Tries to move a circle of ray 'RAY', initially at 'pos',
 // to the position 'pos+delta'.
-// Collides with 'polygons', and slides along them on collision.
-void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons);
+// Collides with 'segments', and slides along them on collision.
+void slideMove(Vec2& pos, Vec2 delta, span<Segment> segments);
 
 static auto const RAY = 0.95;
 

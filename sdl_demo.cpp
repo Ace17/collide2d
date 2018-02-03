@@ -15,13 +15,14 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////
 // simulation
 #include "collision.h"
+#include <vector>
 
 struct World
 {
   Vec2 pos;
   float angle;
 
-  vector<Polygon> sectors;
+  vector<Segment> segments;
 };
 
 Vec2 direction(float angle)
@@ -29,12 +30,21 @@ Vec2 direction(float angle)
   return Vec2(cos(angle), sin(angle));
 }
 
+template<size_t N>
+void pushSegments(vector<Segment>& out, Vec2 const (&data)[N])
+{
+  for(size_t i = 0; i < N; ++i)
+  {
+    auto a = data[(i + 0) % N];
+    auto b = data[(i + 1) % N];
+    out.push_back(Segment { a, b });
+  }
+}
+
 void init(World& world)
 {
   world.pos = Vec2(4, 2);
   world.angle = 0;
-
-  Polygon sector;
 
   {
     static const Vec2 points[] =
@@ -75,8 +85,7 @@ void init(World& world)
       Vec2(-5, -3),
     };
 
-    sector.vertices.assign(begin(points), end(points));
-    world.sectors.push_back(sector);
+    pushSegments(world.segments, points);
   }
 
   {
@@ -87,8 +96,7 @@ void init(World& world)
       Vec2(-1.5, -1),
     };
 
-    sector.vertices.assign(begin(points), end(points));
-    world.sectors.push_back(sector);
+    pushSegments(world.segments, points);
   }
 
   {
@@ -99,8 +107,7 @@ void init(World& world)
       Vec2(4.5, -2.0),
     };
 
-    sector.vertices.assign(begin(points), end(points));
-    world.sectors.push_back(sector);
+    pushSegments(world.segments, points);
   }
 }
 
@@ -128,9 +135,9 @@ void tick(World& world)
   world.angle += omega;
   auto const delta = direction(world.angle) * thrust;
 
-  auto polygons = span<Polygon> { world.sectors.size(), world.sectors.data() };
+  auto segments = span<Segment> { world.segments.size(), world.segments.data() };
 
-  slideMove(world.pos, delta, polygons);
+  slideMove(world.pos, delta, segments);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -152,25 +159,17 @@ void drawScreen(SDL_Renderer* renderer, World& world)
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
 
-  for(auto& sector : world.sectors)
+  for(auto& segment : world.segments)
   {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
-    vector<SDL_Point> sdlPoints;
+    auto a = transform(segment.a);
+    auto b = transform(segment.b);
 
-    for(auto p : sector.vertices)
-      sdlPoints.push_back(transform(p));
+    SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
 
-    sdlPoints.push_back(transform(sector.vertices[0]));
-
-    SDL_RenderDrawLines(renderer, sdlPoints.data(), sdlPoints.size());
-
-    for(auto v : sector.vertices)
-    {
-      auto p = transform(v);
-      SDL_Rect rect { p.x - 2, p.y - 2, 4, 4 };
-      SDL_RenderDrawRect(renderer, &rect);
-    }
+    SDL_Rect rect { a.x - 2, a.y - 2, 4, 4 };
+    SDL_RenderDrawRect(renderer, &rect);
   }
 
   {

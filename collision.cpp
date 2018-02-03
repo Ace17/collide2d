@@ -68,44 +68,27 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   return CollisionInfo { dist, N };
 }
 
-template<typename Lambda>
-void foreachSegment(Polygon const& poly, Lambda onSegment)
-{
-  auto const K = (int)poly.vertices.size();
-
-  for(int i = 0; i < K; ++i)
-  {
-    auto const s0 = poly.vertices[(i + 0) % K];
-    auto const s1 = poly.vertices[(i + 1) % K];
-
-    onSegment(s0, s1);
-  }
-}
-
 static
-CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
+CollisionInfo collideWithSegments(Vec2 pos, span<Segment> segments)
 {
   CollisionInfo earliestCollision;
 
-  auto collideWithSegment = [&] (Vec2 s0, Vec2 s1)
-    {
-      auto const collision = collideCircleWithSegment(pos, s0, s1);
+  for(auto s : segments)
+  {
+    auto const collision = collideCircleWithSegment(pos, s.a, s.b);
 
-      if(collision.dist < earliestCollision.dist)
-        earliestCollision = collision;
-    };
-
-  for(auto& poly : polygons)
-    foreachSegment(poly, collideWithSegment);
+    if(collision.dist < earliestCollision.dist)
+      earliestCollision = collision;
+  }
 
   return earliestCollision;
 }
 
-void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons)
+void slideMove(Vec2& pos, Vec2 delta, span<Segment> segments)
 {
   for(int i = 0; i < 5; ++i)
   {
-    auto const collision = collideWithPolygons(pos + delta, polygons);
+    auto const collision = collideWithSegments(pos + delta, segments);
 
     if(collision.dist == INFINITY)
     {
