@@ -38,7 +38,7 @@ Vec2 removeComponentAlong(Vec2 v, Vec2 u)
 
 struct Collision
 {
-  float dist = INFINITY; // distance (circle center, colliding segment)
+  float depth = 0; // distance (circle center, colliding segment)
   Vec2 N; // collision normal. Pointing towards the moving object
 };
 
@@ -65,7 +65,7 @@ Collision collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   auto const dist = magnitude(delta);
   auto const N = delta * (1.0 / dist);
 
-  return Collision { dist, N };
+  return Collision { RAY - dist, N };
 }
 
 static
@@ -77,7 +77,7 @@ Collision collideWithSegments(Vec2 pos, span<Segment> segments)
   {
     auto const collision = collideCircleWithSegment(pos, s.a, s.b);
 
-    if(collision.dist < earliestCollision.dist)
+    if(collision.depth > earliestCollision.depth)
       earliestCollision = collision;
   }
 
@@ -90,14 +90,14 @@ void slideMove(Vec2& pos, Vec2 delta, span<Segment> segments)
   {
     auto const collision = collideWithSegments(pos + delta, segments);
 
-    if(collision.dist == INFINITY)
+    if(collision.depth == 0)
     {
       pos += delta;
       break;
     }
 
     // fixup position: push the circle out of the segment
-    pos += collision.N * (RAY - collision.dist);
+    pos += collision.N * collision.depth;
 
     // only keep tangential part of delta
     delta = removeComponentAlong(delta, collision.N);

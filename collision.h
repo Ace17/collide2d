@@ -73,5 +73,5 @@ struct Segment
 // Collides with 'segments', and slides along them on collision.
 void slideMove(Vec2& pos, Vec2 delta, span<Segment> segments);
 
-static auto const RAY = 0.95;
+static auto const RAY = 0.95f;
 
