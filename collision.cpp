@@ -113,8 +113,8 @@ void slideMove(Vec2& pos, Vec2 delta, span<Polygon> polygons)
       break;
     }
 
-    // fixup position: slightly repulsive walls
-    pos += collision.N * 0.004;
+    // fixup position: push the circle out of the segment
+    pos += collision.N * (RAY - collision.dist);
 
     // only keep tangential part of delta
     delta = removeComponentAlong(delta, collision.N);
