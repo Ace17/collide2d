@@ -40,6 +40,7 @@ struct CollisionInfo
 {
   float time; // collision time: 0 for immediate blocking, 1 for "no collision"
   Vec2 N; // collision normal. Pointing towards the moving object
+  float dist = 1.0 / 0.0;
 };
 
 // returns the point from the segment [s0;s1] which is the closest to 'pos'
@@ -62,9 +63,10 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   if(delta * delta > RAY * RAY)
     return CollisionInfo { 1, Vec2::zero() };
 
-  auto const N = delta * (1.0 / magnitude(delta));
+  auto const dist = magnitude(delta);
+  auto const N = delta * (1.0 / dist);
 
-  return CollisionInfo { 0, N };
+  return CollisionInfo { 0, N, dist };
 }
 
 template<typename Lambda>
@@ -90,7 +92,7 @@ CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
     {
       auto const collision = collideCircleWithSegment(pos, s0, s1);
 
-      if(collision.time < earliestCollision.time)
+      if(collision.dist < earliestCollision.dist)
         earliestCollision = collision;
     };
 
