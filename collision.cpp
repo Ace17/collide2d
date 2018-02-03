@@ -60,11 +60,11 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   auto const delta = circleCenter - closestPointToCircle;
 
   if(delta * delta > RAY * RAY)
-    return CollisionInfo{1, Vec2::zero() };
+    return CollisionInfo { 1, Vec2::zero() };
 
   auto const N = delta * (1.0 / magnitude(delta));
 
-  return CollisionInfo{0, N};
+  return CollisionInfo { 0, N };
 }
 
 template<typename Lambda>
@@ -86,13 +86,13 @@ CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
   auto earliestCollision = CollisionInfo { 1, Vec2::zero() };
 
-  auto collideWithSegment = [&](Vec2 s0, Vec2 s1)
-  {
-    auto const collision = collideCircleWithSegment(pos, s0, s1);
+  auto collideWithSegment = [&] (Vec2 s0, Vec2 s1)
+    {
+      auto const collision = collideCircleWithSegment(pos, s0, s1);
 
-    if(collision.time < earliestCollision.time)
-      earliestCollision = collision;
-  };
+      if(collision.time < earliestCollision.time)
+        earliestCollision = collision;
+    };
 
   for(auto& poly : polygons)
     foreachSegment(poly, collideWithSegment);

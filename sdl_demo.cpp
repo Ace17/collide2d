@@ -141,13 +141,13 @@ void tick(World& world)
 void drawScreen(SDL_Renderer* renderer, World& world)
 {
   auto transform = [] (Vec2 v)
-  {
-    auto const scale = 20.0;
-    SDL_Point r;
-    r.x = 220 + v.x * scale;
-    r.y = 400 - v.y * scale;
-    return r;
-  };
+    {
+      auto const scale = 20.0;
+      SDL_Point r;
+      r.x = 220 + v.x * scale;
+      r.y = 400 - v.y * scale;
+      return r;
+    };
 
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
