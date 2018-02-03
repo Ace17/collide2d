@@ -164,6 +164,13 @@ void drawScreen(SDL_Renderer* renderer, World& world)
     sdlPoints.push_back(transform(sector.vertices[0]));
 
     SDL_RenderDrawLines(renderer, sdlPoints.data(), sdlPoints.size());
+
+    for(auto v : sector.vertices)
+    {
+      auto p = transform(v);
+      SDL_Rect rect { p.x - 2, p.y - 2, 4, 4};
+      SDL_RenderDrawRect(renderer, &rect);
+    }
   }
 
   {
