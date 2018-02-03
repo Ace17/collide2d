@@ -180,7 +180,7 @@ void drawScreen(SDL_Renderer* renderer, World& world)
 
     for(int i = 0; i <= N; ++i)
     {
-      auto a = transform(world.pos + direction(world.angle + i * 2 * M_PI / N));
+      auto a = transform(world.pos + direction(world.angle + i * 2 * M_PI / N) * RAY);
       SDL_RenderDrawLine(renderer, a.x, a.y, prev.x, prev.y);
       prev = a;
     }
