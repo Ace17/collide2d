@@ -99,7 +99,7 @@ void slideMove(Vec2& pos, Vec2 delta, span<Segment> segments)
     // fixup position: push the circle out of the segment
     pos += collision.N * collision.depth;
 
-    // only keep tangential part of delta
+    // fixup delta: only keep tangential part
     delta = removeComponentAlong(delta, collision.N);
   }
 }
