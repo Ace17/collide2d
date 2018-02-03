@@ -38,8 +38,8 @@ Vec2 removeComponentAlong(Vec2 v, Vec2 u)
 
 struct CollisionInfo
 {
-  Vec2 N; // collision normal. Pointing towards the moving object
   float dist = INFINITY; // distance (circle center, colliding segment)
+  Vec2 N; // collision normal. Pointing towards the moving object
 };
 
 // returns the point from the segment [s0;s1] which is the closest to 'pos'
@@ -60,12 +60,12 @@ CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
   auto const delta = circleCenter - closestPointToCircle;
 
   if(delta * delta > RAY * RAY)
-    return CollisionInfo { Vec2::zero() };
+    return CollisionInfo {};
 
   auto const dist = magnitude(delta);
   auto const N = delta * (1.0 / dist);
 
-  return CollisionInfo { N, dist };
+  return CollisionInfo { dist, N };
 }
 
 template<typename Lambda>
@@ -85,7 +85,7 @@ void foreachSegment(Polygon const& poly, Lambda onSegment)
 static
 CollisionInfo collideWithPolygons(Vec2 pos, span<Polygon> polygons)
 {
-  auto earliestCollision = CollisionInfo { Vec2::zero() };
+  CollisionInfo earliestCollision;
 
   auto collideWithSegment = [&] (Vec2 s0, Vec2 s1)
     {
