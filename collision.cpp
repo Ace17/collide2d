@@ -36,7 +36,7 @@ Vec2 removeComponentAlong(Vec2 v, Vec2 u)
   return v - u * comp;
 }
 
-struct CollisionInfo
+struct Collision
 {
   float dist = INFINITY; // distance (circle center, colliding segment)
   Vec2 N; // collision normal. Pointing towards the moving object
@@ -53,25 +53,25 @@ Vec2 closestPointToSegment(Vec2 pos, Vec2 s0, Vec2 s1)
 }
 
 static
-CollisionInfo collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
+Collision collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
 {
   auto const closestPointToCircle = closestPointToSegment(circleCenter, s0, s1);
 
   auto const delta = circleCenter - closestPointToCircle;
 
   if(delta * delta > RAY * RAY)
-    return CollisionInfo {};
+    return Collision {};
 
   auto const dist = magnitude(delta);
   auto const N = delta * (1.0 / dist);
 
-  return CollisionInfo { dist, N };
+  return Collision { dist, N };
 }
 
 static
-CollisionInfo collideWithSegments(Vec2 pos, span<Segment> segments)
+Collision collideWithSegments(Vec2 pos, span<Segment> segments)
 {
-  CollisionInfo earliestCollision;
+  Collision earliestCollision;
 
   for(auto s : segments)
   {
