@@ -174,13 +174,16 @@ void drawScreen(SDL_Renderer* renderer, World& world)
 
   {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-    vector<SDL_Point> sdlPoints;
-    sdlPoints.push_back(transform(world.pos));
 
-    for(int i = 0; i <= 100; ++i)
-      sdlPoints.push_back(transform(world.pos + direction(world.angle + i * 2 * M_PI / 100)));
+    auto const N = 20;
+    auto prev = transform(world.pos);
 
-    SDL_RenderDrawLines(renderer, sdlPoints.data(), sdlPoints.size());
+    for(int i = 0; i <= N; ++i)
+    {
+      auto a = transform(world.pos + direction(world.angle + i * 2 * M_PI / N));
+      SDL_RenderDrawLine(renderer, a.x, a.y, prev.x, prev.y);
+      prev = a;
+    }
   }
 
   SDL_RenderPresent(renderer);
