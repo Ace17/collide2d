@@ -42,20 +42,20 @@ struct Collision
   Vec2 N; // collision normal. Pointing towards the moving object
 };
 
-// returns the point from the segment [s0;s1] which is the closest to 'pos'
+// returns the point from the segment 'seg' which is the closest to 'pos'
 static
-Vec2 closestPointToSegment(Vec2 pos, Vec2 s0, Vec2 s1)
+Vec2 closestPointToSegment(Vec2 pos, Segment seg)
 {
-  auto const segmentLength = magnitude(s1 - s0);
-  auto const segmentDir = (s1 - s0) * (1.0 / segmentLength);
-  auto const relativePos = pos - s0;
-  return s0 + segmentDir * clamp(relativePos * segmentDir, 0.0f, segmentLength);
+  auto const segmentLength = magnitude(seg.b - seg.a);
+  auto const segmentDir = (seg.b - seg.a) * (1.0 / segmentLength);
+  auto const relativePos = pos - seg.a;
+  return seg.a + segmentDir * clamp(relativePos * segmentDir, 0.0f, segmentLength);
 }
 
 static
-Collision collideCircleWithSegment(Vec2 circleCenter, Vec2 s0, Vec2 s1)
+Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
 {
-  auto const closestPointToCircle = closestPointToSegment(circleCenter, s0, s1);
+  auto const closestPointToCircle = closestPointToSegment(circleCenter, seg);
 
   auto const delta = circleCenter - closestPointToCircle;
 
@@ -73,9 +73,9 @@ Collision collideWithSegments(Vec2 pos, span<Segment> segments)
 {
   Collision earliestCollision;
 
-  for(auto s : segments)
+  for(auto seg : segments)
   {
-    auto const collision = collideCircleWithSegment(pos, s.a, s.b);
+    auto const collision = collideCircleWithSegment(pos, seg);
 
     if(collision.depth > earliestCollision.depth)
       earliestCollision = collision;
