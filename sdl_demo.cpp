@@ -6,16 +6,13 @@
  * License, or (at your option) any later version.
  */
 
-#include <stdexcept>
-#include <iostream>
-
-using namespace std;
-
 ///////////////////////////////////////////////////////////////////////////////
 // simulation
 #include "collision.h"
 #include <vector>
 #include <cmath>
+
+using namespace std;
 
 struct Input
 {
@@ -151,6 +148,9 @@ void tick(World& world, Input input)
 
 ///////////////////////////////////////////////////////////////////////////////
 // sdl entry point
+
+#include <stdexcept>
+#include <iostream>
 
 #include "SDL.h"
 #include "collision.h"
