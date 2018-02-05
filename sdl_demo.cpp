@@ -8,7 +8,6 @@
 
 #include <stdexcept>
 #include <iostream>
-#include "SDL.h"
 
 using namespace std;
 
@@ -16,6 +15,14 @@ using namespace std;
 // simulation
 #include "collision.h"
 #include <vector>
+#include <cmath>
+
+struct Input
+{
+  bool left, right, up, down;
+  bool force;
+  bool quit;
+};
 
 struct World
 {
@@ -111,25 +118,24 @@ void init(World& world)
   }
 }
 
-void tick(World& world)
+void tick(World& world, Input input)
 {
   float omega = 0;
   float thrust = 0;
-  auto keys = SDL_GetKeyboardState(nullptr);
 
-  if(keys[SDL_SCANCODE_LEFT])
+  if(input.left)
     omega += 0.1;
 
-  if(keys[SDL_SCANCODE_RIGHT])
+  if(input.right)
     omega -= 0.1;
 
-  if(keys[SDL_SCANCODE_DOWN])
+  if(input.down)
     thrust -= 0.08;
 
-  if(keys[SDL_SCANCODE_UP])
+  if(input.up)
     thrust += 0.08;
 
-  if(keys[SDL_SCANCODE_HOME])
+  if(input.force)
     world.pos += direction(world.angle) * 0.1;
 
   world.angle += omega;
@@ -143,6 +149,7 @@ void tick(World& world)
 ///////////////////////////////////////////////////////////////////////////////
 // sdl entry point
 
+#include "SDL.h"
 #include "collision.h"
 
 void drawScreen(SDL_Renderer* renderer, World& world)
@@ -189,6 +196,28 @@ void drawScreen(SDL_Renderer* renderer, World& world)
   SDL_RenderPresent(renderer);
 }
 
+Input readInput()
+{
+  Input r {};
+
+  SDL_Event event;
+
+  while(SDL_PollEvent(&event))
+  {
+    if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE))
+      r.quit = true;
+  }
+
+  auto keys = SDL_GetKeyboardState(nullptr);
+  r.left = keys[SDL_SCANCODE_LEFT];
+  r.right = keys[SDL_SCANCODE_RIGHT];
+  r.down = keys[SDL_SCANCODE_DOWN];
+  r.up = keys[SDL_SCANCODE_UP];
+  r.force = keys[SDL_SCANCODE_HOME];
+
+  return r;
+}
+
 void safeMain()
 {
   if(SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -207,19 +236,14 @@ void safeMain()
 
   init(world);
 
-  bool keepGoing = true;
-
-  while(keepGoing)
+  while(1)
   {
-    SDL_Event event;
+    auto const input = readInput();
 
-    while(SDL_PollEvent(&event))
-    {
-      if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE))
-        keepGoing = false;
-    }
+    if(input.quit)
+      break;
 
-    tick(world);
+    tick(world, input);
     drawScreen(renderer, world);
     SDL_Delay(10);
   }
