@@ -9,8 +9,6 @@
 #include "collision.h"
 #include <cmath>
 
-using namespace std;
-
 template<typename T>
 T clamp(T val, T min, T max)
 {
@@ -23,11 +21,7 @@ T clamp(T val, T min, T max)
   return val;
 }
 
-static
-float magnitude(Vec2 v)
-{
-  return sqrt(v * v);
-}
+static float magnitude(Vec2 v) { return sqrt(v * v); }
 
 struct Collision
 {
@@ -36,8 +30,7 @@ struct Collision
 };
 
 // returns the point from the segment 'seg' which is the closest to 'pos'
-static
-Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
+static Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
 {
   auto const segmentLength = magnitude(seg.b - seg.a);
   auto const segmentDir = (seg.b - seg.a) * (1.0 / segmentLength);
@@ -45,8 +38,7 @@ Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
   return seg.a + segmentDir * clamp(relativePos * segmentDir, 0.0f, segmentLength);
 }
 
-static
-Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
+static Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
 {
   auto const delta = circleCenter - closestPointOnSegment(circleCenter, seg);
 
@@ -59,8 +51,7 @@ Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
   return Collision { RAY - dist, N };
 }
 
-static
-Collision collideWithSegments(Vec2 pos, span<Segment> segments)
+static Collision collideWithSegments(Vec2 pos, span<Segment> segments)
 {
   Collision earliestCollision;
 
