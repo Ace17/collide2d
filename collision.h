@@ -17,40 +17,15 @@ struct Vec2
   Vec2() = default;
   Vec2(float x_, float y_) : x(x_), y(y_) {}
 
-  Vec2 operator * (float f) const
-  {
-    return Vec2 { x* f, y* f };
-  }
+  void operator += (Vec2 other) { *this = *this + other; }
+  void operator -= (Vec2 other) { *this = *this - other; }
+  float operator * (Vec2 other) const { return x * other.x + y * other.y; }
 
-  void operator += (Vec2 other)
-  {
-    *this = *this + other;
-  }
+  Vec2 operator + (Vec2 other) const { return Vec2 { x + other.x, y + other.y }; }
+  Vec2 operator - (Vec2 other) const { return Vec2 { x - other.x, y - other.y }; }
+  Vec2 operator * (float f) const { return Vec2 { x* f, y* f }; }
 
-  void operator -= (Vec2 other)
-  {
-    *this = *this - other;
-  }
-
-  float operator * (Vec2 other) const
-  {
-    return x * other.x + y * other.y;
-  }
-
-  Vec2 operator + (Vec2 other) const
-  {
-    return Vec2 { x + other.x, y + other.y };
-  }
-
-  Vec2 operator - (Vec2 other) const
-  {
-    return Vec2 { x - other.x, y - other.y };
-  }
-
-  static Vec2 zero()
-  {
-    return Vec2(0, 0);
-  }
+  static Vec2 zero() { return Vec2(0, 0); }
 };
 
 template<typename T>
