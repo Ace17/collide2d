@@ -29,13 +29,6 @@ float magnitude(Vec2 v)
   return sqrt(v * v);
 }
 
-static
-Vec2 removeComponentAlong(Vec2 v, Vec2 u)
-{
-  auto const comp = v * u;
-  return v - u * comp;
-}
-
 struct Collision
 {
   float depth = 0; // distance (circle center, colliding segment)
@@ -84,23 +77,22 @@ Collision collideWithSegments(Vec2 pos, span<Segment> segments)
   return earliestCollision;
 }
 
+// discrete collision detection
 void slideMove(Vec2& pos, Vec2 delta, span<Segment> segments)
 {
+  // move to new position ...
+  pos += delta;
+
+  // ... then fix it, if needed
   for(int i = 0; i < 5; ++i)
   {
-    auto const collision = collideWithSegments(pos + delta, segments);
+    auto const collision = collideWithSegments(pos, segments);
 
     if(collision.depth == 0)
-    {
-      pos += delta;
       break;
-    }
 
     // fixup position: push the circle out of the segment
     pos += collision.N * collision.depth;
-
-    // fixup delta: only keep tangential part
-    delta = removeComponentAlong(delta, collision.N);
   }
 }
 
