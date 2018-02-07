@@ -140,10 +140,7 @@ void tick(World& world, Input input)
 
   auto segments = span<Segment> { world.segments.size(), world.segments.data() };
 
-  // HACK: reduce stuttering
-  auto const N = 2;
-  for(int i=0;i < N;++i)
-    slideMove(world.pos, delta * (1.0 / N), segments);
+  slideMove(world.pos, delta, segments);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
