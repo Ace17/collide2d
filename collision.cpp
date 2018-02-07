@@ -37,7 +37,7 @@ struct Collision
 
 // returns the point from the segment 'seg' which is the closest to 'pos'
 static
-Vec2 closestPointToSegment(Vec2 pos, Segment seg)
+Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
 {
   auto const segmentLength = magnitude(seg.b - seg.a);
   auto const segmentDir = (seg.b - seg.a) * (1.0 / segmentLength);
@@ -48,9 +48,7 @@ Vec2 closestPointToSegment(Vec2 pos, Segment seg)
 static
 Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
 {
-  auto const closestPointToCircle = closestPointToSegment(circleCenter, seg);
-
-  auto const delta = circleCenter - closestPointToCircle;
+  auto const delta = circleCenter - closestPointOnSegment(circleCenter, seg);
 
   if(delta * delta > RAY * RAY)
     return Collision {};
