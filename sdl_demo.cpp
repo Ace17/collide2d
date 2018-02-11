@@ -130,15 +130,15 @@ void tick(World& world, Input input)
   if(input.up)
     thrust += 0.08;
 
-  if(input.force)
-    world.pos += direction(world.angle) * 0.1;
-
   world.angle += omega;
   auto const delta = direction(world.angle) * thrust;
 
   auto segments = span<Segment> { world.segments.size(), world.segments.data() };
 
-  slideMove(world.pos, delta, segments);
+  if(input.force)
+    world.pos += delta;
+  else
+    slideMove(world.pos, delta, segments);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
