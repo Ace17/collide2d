@@ -45,8 +45,10 @@ void pushPolygon(vector<Segment>& out, Vec2 const (&data)[N])
   }
 }
 
-void init(World& world)
+World createWorld()
 {
+  World world;
+
   world.pos = Vec2(4, 2);
   world.angle = 0;
 
@@ -107,6 +109,8 @@ void init(World& world)
   };
 
   pushPolygon(world.segments, points3);
+
+  return world;
 }
 
 void tick(World& world, Input input)
@@ -141,7 +145,6 @@ void tick(World& world, Input input)
 // sdl entry point
 
 #include <stdexcept>
-#include <iostream>
 
 #include "SDL.h"
 #include "collision.h"
@@ -212,7 +215,7 @@ Input readInput()
   return r;
 }
 
-void safeMain()
+int main()
 {
   if(SDL_Init(SDL_INIT_VIDEO) != 0)
     throw runtime_error("Can't init SDL");
@@ -226,9 +229,7 @@ void safeMain()
     throw runtime_error("Can't create window");
   }
 
-  World world;
-
-  init(world);
+  auto world = createWorld();
 
   while(1)
   {
@@ -243,19 +244,6 @@ void safeMain()
   }
 
   SDL_Quit();
-}
-
-int main()
-{
-  try
-  {
-    safeMain();
-    return 0;
-  }
-  catch(const exception& e)
-  {
-    cerr << "Fatal: " << e.what() << endl;
-    return 1;
-  }
+  return 0;
 }
 
