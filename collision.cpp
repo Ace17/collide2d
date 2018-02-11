@@ -1,11 +1,8 @@
-/*
- * Copyright (C) 2018 - Sebastien Alaiwan
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- */
-
+// Copyright (C) 2018 - Sebastien Alaiwan
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 #include "collision.h"
 #include <cmath>
 
@@ -30,7 +27,6 @@ static Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
 
   // normalize tangent
   auto const T = tangent * (1.0 / magnitude(tangent));
-
   auto const relativePos = pos - seg.a;
   return seg.a + T * (T * relativePos);
 }
@@ -44,7 +40,6 @@ static Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
 
   auto const dist = magnitude(delta);
   auto const N = delta * (1.0 / dist);
-
   return Collision { RAY - dist, N };
 }
 
