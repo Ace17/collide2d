@@ -35,7 +35,7 @@ Vec2 direction(float angle)
 }
 
 template<size_t N>
-void pushSegments(vector<Segment>& out, Vec2 const (&data)[N])
+void pushPolygon(vector<Segment>& out, Vec2 const (&data)[N])
 {
   for(size_t i = 0; i < N; ++i)
   {
@@ -50,69 +50,63 @@ void init(World& world)
   world.pos = Vec2(4, 2);
   world.angle = 0;
 
+  static const Vec2 points1[] =
   {
-    static const Vec2 points[] =
-    {
-      Vec2(8, -3),
-      Vec2(8, 2),
-      Vec2(12, 2),
-      Vec2(12, 4),
-      Vec2(12, 8),
-      Vec2(14, 8),
-      Vec2(12, 8),
-      Vec2(12, 16),
-      Vec2(-3, 16),
-      Vec2(-3, 14),
-      Vec2(10, 14),
-      Vec2(10, 4),
-      Vec2(8, 4),
-      Vec2(4, 4),
-      Vec2(4, 5),
-      Vec2(8, 8),
-      Vec2(3, 8),
-      Vec2(3, 13),
-      Vec2(1, 13),
-      Vec2(-1, 13),
-      Vec2(-3, 13),
-      Vec2(-3, 10),
-      Vec2(1, 10),
-      Vec2(1, 8),
-      Vec2(0, 8),
-      Vec2(-1, 3.5),
-      Vec2(-2, 3.5),
-      Vec2(-2, 3.0),
-      Vec2(-3, 3.0),
-      Vec2(-3, 2.5),
-      Vec2(-4, 2.5),
-      Vec2(-4, 2),
-      Vec2(-5, 2),
-      Vec2(-5, -3),
-    };
+    Vec2(8, -3),
+    Vec2(8, 2),
+    Vec2(12, 2),
+    Vec2(12, 4),
+    Vec2(12, 8),
+    Vec2(14, 8),
+    Vec2(12, 8),
+    Vec2(12, 16),
+    Vec2(-3, 16),
+    Vec2(-3, 14),
+    Vec2(10, 14),
+    Vec2(10, 4),
+    Vec2(8, 4),
+    Vec2(4, 4),
+    Vec2(4, 5),
+    Vec2(8, 8),
+    Vec2(3, 8),
+    Vec2(3, 13),
+    Vec2(1, 13),
+    Vec2(-1, 13),
+    Vec2(-3, 13),
+    Vec2(-3, 10),
+    Vec2(1, 10),
+    Vec2(1, 8),
+    Vec2(0, 8),
+    Vec2(-1, 3.5),
+    Vec2(-2, 3.5),
+    Vec2(-2, 3.0),
+    Vec2(-3, 3.0),
+    Vec2(-3, 2.5),
+    Vec2(-4, 2.5),
+    Vec2(-4, 2),
+    Vec2(-5, 2),
+    Vec2(-5, -3),
+  };
 
-    pushSegments(world.segments, points);
-  }
+  pushPolygon(world.segments, points1);
 
+  static const Vec2 points2[] =
   {
-    static const Vec2 points[] =
-    {
-      Vec2(-1, -2.0),
-      Vec2(-2, -2.0),
-      Vec2(-1.5, -1),
-    };
+    Vec2(-1, -2.0),
+    Vec2(-2, -2.0),
+    Vec2(-1.5, -1),
+  };
 
-    pushSegments(world.segments, points);
-  }
+  pushPolygon(world.segments, points2);
 
+  static const Vec2 points3[] =
   {
-    static const Vec2 points[] =
-    {
-      Vec2(6, -2.9),
-      Vec2(3, -2.9),
-      Vec2(4.5, -2.0),
-    };
+    Vec2(6, -2.9),
+    Vec2(3, -2.9),
+    Vec2(4.5, -2.0),
+  };
 
-    pushSegments(world.segments, points);
-  }
+  pushPolygon(world.segments, points3);
 }
 
 void tick(World& world, Input input)
