@@ -9,18 +9,6 @@
 #include "collision.h"
 #include <cmath>
 
-template<typename T>
-T clamp(T val, T min, T max)
-{
-  if(val < min)
-    return min;
-
-  if(val > max)
-    return max;
-
-  return val;
-}
-
 static float magnitude(Vec2 v) { return sqrt(v * v); }
 
 struct Collision
@@ -32,10 +20,19 @@ struct Collision
 // returns the point from the segment 'seg' which is the closest to 'pos'
 static Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
 {
-  auto const segmentLength = magnitude(seg.b - seg.a);
-  auto const segmentDir = (seg.b - seg.a) * (1.0 / segmentLength);
+  auto const tangent = seg.b - seg.a;
+
+  if((pos - seg.a) * tangent <= 0)
+    return seg.a; // 'pos' is before 'a' on the line (ab)
+
+  if((pos - seg.b) * tangent >= 0)
+    return seg.b; // 'pos' is after 'b' on the line (ab)
+
+  // normalize tangent
+  auto const T = tangent * (1.0 / magnitude(tangent));
+
   auto const relativePos = pos - seg.a;
-  return seg.a + segmentDir * clamp(relativePos * segmentDir, 0.0f, segmentLength);
+  return seg.a + T * (T * relativePos);
 }
 
 static Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
