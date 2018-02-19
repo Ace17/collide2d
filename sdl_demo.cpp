@@ -16,6 +16,7 @@ struct Input
 {
   bool left, right, up, down;
   bool force;
+  bool changeShape;
   bool quit;
 };
 
@@ -23,6 +24,7 @@ struct World
 {
   Vec2 pos;
   float angle;
+  Shape shape = Circle;
 
   vector<Segment> segments;
 };
@@ -128,6 +130,9 @@ void tick(World& world, Input input)
   if(input.up)
     thrust += 0.08;
 
+  if(input.changeShape)
+    world.shape = Shape(1 - world.shape);
+
   world.angle += omega;
   auto const delta = direction(world.angle) * thrust;
 
@@ -136,7 +141,7 @@ void tick(World& world, Input input)
   if(input.force)
     world.pos += delta;
   else
-    slideMove(world.pos, delta, segments);
+    slideMove(world.pos, world.shape, delta, segments);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -177,14 +182,33 @@ void drawScreen(SDL_Renderer* renderer, World& world)
   {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
 
-    auto const N = 20;
-    auto prev = transform(world.pos);
-
-    for(int i = 0; i <= N; ++i)
     {
-      auto a = transform(world.pos + direction(world.angle + i * 2 * M_PI / N) * RAY);
-      SDL_RenderDrawLine(renderer, a.x, a.y, prev.x, prev.y);
-      prev = a;
+      auto origin = transform(world.pos);
+      auto target = transform(world.pos + direction(world.angle) * RAY);
+      SDL_RenderDrawLine(renderer, origin.x, origin.y, target.x, target.y);
+    }
+
+    if(world.shape == Circle)
+    {
+      auto const N = 20;
+      auto prev = transform(world.pos);
+
+      for(int i = 0; i <= N; ++i)
+      {
+        auto a = transform(world.pos + direction(world.angle + i * 2 * M_PI / N) * RAY);
+        SDL_RenderDrawLine(renderer, a.x, a.y, prev.x, prev.y);
+        prev = a;
+      }
+    }
+    else
+    {
+      SDL_Point corners[4];
+      corners[0] = transform(world.pos + Vec2(-RAY, -RAY));
+      corners[1] = transform(world.pos + Vec2(-RAY, +RAY));
+      corners[2] = transform(world.pos + Vec2(+RAY, +RAY));
+      corners[3] = transform(world.pos + Vec2(+RAY, -RAY));
+      corners[4] = corners[0];
+      SDL_RenderDrawLines(renderer, corners, 5);
     }
   }
 
@@ -201,6 +225,9 @@ Input readInput()
   {
     if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE))
       r.quit = true;
+
+    if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
+      r.changeShape = true;
   }
 
   auto keys = SDL_GetKeyboardState(nullptr);
