@@ -57,11 +57,13 @@ World createWorld()
     Vec2(8, -3),
     Vec2(8, 2),
     Vec2(12, 2),
-    Vec2(12, 4),
-    Vec2(12, 8),
-    Vec2(14, 8),
-    Vec2(12, 8),
-    Vec2(12, 16),
+    Vec2(12, 3),
+    Vec2(12, 5),
+    Vec2(14, 5),
+    Vec2(12, 5),
+    Vec2(12, 7),
+    Vec2(15, 7),
+    Vec2(15, 16),
     Vec2(-3, 16),
     Vec2(-3, 14),
     Vec2(10, 14),
@@ -110,6 +112,25 @@ World createWorld()
 
   pushPolygon(world.segments, points3);
 
+  static const Vec2 points4[] =
+  {
+    Vec2(12, 7),
+    Vec2(12, 9),
+    Vec2(13, 9),
+    Vec2(13, 7),
+  };
+
+  pushPolygon(world.segments, points4);
+
+  static const Vec2 points5[] =
+  {
+    Vec2(12, 9),
+    Vec2(12, 11),
+    Vec2(13, 11),
+    Vec2(13, 9),
+  };
+
+  pushPolygon(world.segments, points5);
   return world;
 }
 
