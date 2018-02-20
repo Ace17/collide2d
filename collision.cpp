@@ -69,9 +69,9 @@ static Collision collideBoxWithSegment(Vec2 center, Segment seg)
   if((center - seg.a) * (seg.a - seg.b) > 0)
     axes[axeCount++] = normalize(center - seg.a);
 
-  auto r = Collision{1.0f/0.0f, Vec2{}};
+  auto r = Collision { 1.0f / 0.0f, Vec2 {} };
 
-  for(int i=0;i < axeCount;++i)
+  for(int i = 0; i < axeCount; ++i)
   {
     auto const N = axes[i];
 
@@ -88,14 +88,14 @@ static Collision collideBoxWithSegment(Vec2 center, Segment seg)
     auto const segPosMin = min(segPos0, segPos1) - THICKNESS;
 
     if(boxPosMin > segPosMax || boxPosMax < segPosMin)
-      return Collision{}; // box and segments are separated by N
+      return Collision {}; // box and segments are separated by N
 
     Collision c;
 
     if(boxPos > segPos0)
-      c = Collision{segPosMax - boxPosMin, N};
+      c = Collision { segPosMax - boxPosMin, N };
     else
-      c = Collision{boxPosMax - segPosMin, N * -1.0};
+      c = Collision { boxPosMax - segPosMin, N * -1.0 };
 
     if(c.depth < r.depth)
       r = c;
