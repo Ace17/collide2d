@@ -105,18 +105,18 @@ static Collision collideBoxWithSegment(Vec2 center, Segment seg)
 
 static Collision collideWithSegments(Vec2 pos, Shape shape, span<Segment> segments)
 {
-  Collision earliestCollision;
+  Collision deepest;
 
   for(auto seg : segments)
   {
     auto collide = shape == Circle ? collideCircleWithSegment : collideBoxWithSegment;
     auto const collision = collide(pos, seg);
 
-    if(collision.depth > earliestCollision.depth)
-      earliestCollision = collision;
+    if(collision.depth > deepest.depth)
+      deepest = collision;
   }
 
-  return earliestCollision;
+  return deepest;
 }
 
 // discrete collision detection
