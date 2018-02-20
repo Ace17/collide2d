@@ -15,8 +15,8 @@ static Vec2 rotateLeft(Vec2 v) { return Vec2(-v.y, v.x); }
 
 struct Collision
 {
-  float depth = 0; // distance (circle center, colliding segment)
-  Vec2 N; // collision normal. Pointing towards the moving object
+  float depth = 0; // penetration depth.
+  Vec2 N; // collision normal. Pointing towards the moving object.
 };
 
 // returns the point from the segment 'seg' which is the closest to 'pos'
