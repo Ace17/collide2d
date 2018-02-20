@@ -30,8 +30,7 @@ static Vec2 closestPointOnSegment(Vec2 pos, Segment seg)
   if((pos - seg.b) * tangent >= 0)
     return seg.b; // 'pos' is after 'b' on the line (ab)
 
-  // normalize tangent
-  auto const T = tangent * (1.0 / magnitude(tangent));
+  auto const T = normalize(tangent);
   auto const relativePos = pos - seg.a;
   return seg.a + T * (T * relativePos);
 }
