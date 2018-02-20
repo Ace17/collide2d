@@ -49,7 +49,7 @@ enum Shape
 // Tries to move a circle of ray 'RAY', initially at 'pos',
 // to the position 'pos+delta'.
 // Collides with 'segments', and slides along them on collision.
-void slideMove(Vec2& pos, Shape shape, Vec2 delta, span<Segment> segments);
+void slideMove(Vec2& pos, Shape shape, Vec2 delta, span<Segment> segments, Vec2& vel);
 
 static auto const RAY = 0.8f;
 

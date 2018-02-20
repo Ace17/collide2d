@@ -120,7 +120,7 @@ static Collision collideWithSegments(Vec2 pos, Shape shape, span<Segment> segmen
 }
 
 // discrete collision detection
-void slideMove(Vec2& pos, Shape shape, Vec2 delta, span<Segment> segments)
+void slideMove(Vec2& pos, Shape shape, Vec2 delta, span<Segment> segments, Vec2& vel)
 {
   // move to new position ...
   pos += delta;
@@ -135,6 +135,12 @@ void slideMove(Vec2& pos, Shape shape, Vec2 delta, span<Segment> segments)
 
     // fixup position: push the circle out of the segment
     pos += collision.N * collision.depth;
+
+    // fixup velocity: remove normal component
+    vel -= collision.N * (vel * collision.N);
+
+    // small friction
+    vel = vel * 0.95;
   }
 }
 

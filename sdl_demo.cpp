@@ -23,6 +23,7 @@ struct Input
 struct World
 {
   Vec2 pos;
+  Vec2 vel;
   float angle;
   Shape shape = Circle;
 
@@ -50,6 +51,7 @@ World createWorld()
   World world;
 
   world.pos = Vec2(4, 2);
+  world.vel = Vec2::zero();
   world.angle = 0;
 
   static const Vec2 points1[] =
@@ -125,23 +127,26 @@ void tick(World& world, Input input)
     omega -= 0.1;
 
   if(input.down)
-    thrust -= 0.08;
+    thrust -= 0.01;
 
   if(input.up)
-    thrust += 0.08;
+    thrust += 0.01;
 
   if(input.changeShape)
     world.shape = Shape(1 - world.shape);
 
   world.angle += omega;
-  auto const delta = direction(world.angle) * thrust;
+  world.vel += Vec2(0, -0.005);
+  world.vel += direction(world.angle) * thrust;
+  world.vel = world.vel * 0.99;
+  auto const delta = world.vel;
 
   auto segments = span<Segment> { world.segments.size(), world.segments.data() };
 
   if(input.force)
     world.pos += delta;
   else
-    slideMove(world.pos, world.shape, delta, segments);
+    slideMove(world.pos, world.shape, delta, segments, world.vel);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
