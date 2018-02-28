@@ -50,6 +50,7 @@ static Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
 struct Range
 {
   float min, max;
+  float middle() const { return (min + max) * 0.5; }
 };
 
 static Range projectBoxOnAxis(Vec2 boxCenter, Vec2 boxHalfSize, Vec2 N)
@@ -107,10 +108,7 @@ static Collision collideBoxWithSegment(Vec2 center, Segment seg)
 
     Collision c;
 
-    auto const boxMiddle = (boxRange.min + boxRange.max) * 0.5;
-    auto const segMiddle = (segRange.min + segRange.max) * 0.5;
-
-    if(boxMiddle > segMiddle)
+    if(boxRange.middle() > segRange.middle())
       c = Collision { segRange.max - boxRange.min, N };
     else
       c = Collision { boxRange.max - segRange.min, N * -1.0 };
