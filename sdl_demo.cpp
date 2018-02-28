@@ -105,9 +105,13 @@ World createWorld()
 
   static const Vec2 points3[] =
   {
-    Vec2(6, -2.9),
-    Vec2(3, -2.9),
-    Vec2(4.5, -2.0),
+    Vec2(2, -3),
+    Vec2(3, -2),
+    Vec2(4, -3),
+    Vec2(3, -2),
+    Vec2(4, -1),
+    Vec2(5, -2),
+    Vec2(6, -3),
   };
 
   pushPolygon(world.segments, points3);
