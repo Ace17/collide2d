@@ -47,10 +47,34 @@ static Collision collideCircleWithSegment(Vec2 circleCenter, Segment seg)
   return Collision { RAY - dist, N };
 }
 
-static Collision collideBoxWithSegment(Vec2 center, Segment seg)
+struct Range
+{
+  float min, max;
+};
+
+static Range projectBoxOnAxis(Vec2 boxCenter, Vec2 boxHalfSize, Vec2 N)
+{
+  auto boxEffectiveRadius = abs(boxHalfSize.x * N.x) + abs(boxHalfSize.y * N.y);
+
+  auto boxPos = boxCenter * N;
+  auto boxMin = boxPos - boxEffectiveRadius;
+  auto boxMax = boxPos + boxEffectiveRadius;
+
+  return Range { boxMin, boxMax };
+}
+
+static Range projectSegmentOnAxis(Segment seg, Vec2 N)
 {
   const float THICKNESS = 0.1;
 
+  auto segMin = min(seg.a * N, seg.b * N) - THICKNESS;
+  auto segMax = max(seg.a * N, seg.b * N) + THICKNESS;
+
+  return Range { segMin, segMax };
+}
+
+static Collision collideBoxWithSegment(Vec2 center, Segment seg)
+{
   auto const boxHalfSize = Vec2(RAY, RAY);
 
   Vec2 axes[8];
@@ -74,27 +98,22 @@ static Collision collideBoxWithSegment(Vec2 center, Segment seg)
   {
     auto const N = axes[i];
 
-    // project the box on the separating axis N
-    auto const boxPos = center * N;
-    auto const boxRadius = abs(boxHalfSize.x * N.x) + abs(boxHalfSize.y * N.y);
-    auto const boxPosMax = boxPos + boxRadius;
-    auto const boxPosMin = boxPos - boxRadius;
+    auto const boxRange = projectBoxOnAxis(center, boxHalfSize, N);
+    auto const segRange = projectSegmentOnAxis(seg, N);
 
-    // project the segment on the separating axis N
-    auto const segPos0 = seg.a * N;
-    auto const segPos1 = seg.b * N;
-    auto const segPosMax = max(segPos0, segPos1) + THICKNESS;
-    auto const segPosMin = min(segPos0, segPos1) - THICKNESS;
 
-    if(boxPosMin > segPosMax || boxPosMax < segPosMin)
+    if(boxRange.min > segRange.max || boxRange.max < segRange.min)
       return Collision {}; // box and segments are separated by N
 
     Collision c;
 
-    if(boxPos > segPos0)
-      c = Collision { segPosMax - boxPosMin, N };
+    auto const boxMiddle = (boxRange.min + boxRange.max) * 0.5;
+    auto const segMiddle = (segRange.min + segRange.max) * 0.5;
+
+    if(boxMiddle > segMiddle)
+      c = Collision { segRange.max - boxRange.min, N };
     else
-      c = Collision { boxPosMax - segPosMin, N * -1.0 };
+      c = Collision { boxRange.max - segRange.min, N * -1.0 };
 
     if(c.depth < r.depth)
       r = c;
