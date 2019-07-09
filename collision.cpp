@@ -102,7 +102,6 @@ static Collision collideBoxWithSegment(Vec2 center, Segment seg)
     auto const boxRange = projectBoxOnAxis(center, boxHalfSize, N);
     auto const segRange = projectSegmentOnAxis(seg, N);
 
-
     if(boxRange.min > segRange.max || boxRange.max < segRange.min)
       return Collision {}; // box and segments are separated by N
 
