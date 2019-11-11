@@ -51,5 +51,7 @@ enum Shape
 // Collides with 'segments', and slides along them on collision.
 void slideMove(Vec2& pos, Shape shape, Vec2 delta, span<Segment> segments);
 
+float raycast(Vec2 from, Vec2 to, span<Segment> segments);
+
 static auto const RAY = 0.8f;
 

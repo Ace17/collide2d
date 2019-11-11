@@ -23,6 +23,7 @@ struct Input
 struct World
 {
   Vec2 pos;
+  Vec2 rayEnd;
   float angle;
   Shape shape = Circle;
 
@@ -167,6 +168,12 @@ void tick(World& world, Input input)
     world.pos += delta;
   else
     slideMove(world.pos, world.shape, delta, segments);
+
+  {
+    auto delta = direction(world.angle) * 10;
+    auto ratio = raycast(world.pos, world.pos + delta, segments);
+    world.rayEnd = world.pos + delta * ratio;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -235,6 +242,13 @@ void drawScreen(SDL_Renderer* renderer, World& world)
       corners[4] = corners[0];
       SDL_RenderDrawLines(renderer, corners, 5);
     }
+  }
+
+  {
+    auto a = transform(world.pos);
+    auto b = transform(world.rayEnd);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
   }
 
   SDL_RenderPresent(renderer);
